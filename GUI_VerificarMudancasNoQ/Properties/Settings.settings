@@ -1,0 +1,15 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="GUI_VerificarMudancasNoQ.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="Pagina" Type="System.String" Scope="User">
+      <Value Profile="(Default)">http://qacademico.ifsul.edu.br//qacademico/index.asp?t=2071</Value>
+    </Setting>
+    <Setting Name="Intervalo" Type="System.String" Scope="User">
+      <Value Profile="(Default)">300000</Value>
+    </Setting>
+    <Setting Name="Navegador" Type="System.String" Scope="User">
+      <Value Profile="(Default)">chrome</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
