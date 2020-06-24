@@ -2,6 +2,7 @@
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Firefox;
 using System;
+using System.Windows;
 
 namespace GUI_VerificarMudancasNoQ
 {
@@ -27,21 +28,28 @@ namespace GUI_VerificarMudancasNoQ
         public void iniciar_driver()
         {
             ler_config();
-            if (navegador == "chrome")
+            try
             {
-                ChromeOptions c_options = new ChromeOptions();
-                c_options.AddArgument("--headless");
-                var driverService = ChromeDriverService.CreateDefaultService();
-                driverService.HideCommandPromptWindow = true;
-                _driver = new ChromeDriver(driverService, c_options);
+                if (navegador == "chrome")
+                {
+                    ChromeOptions c_options = new ChromeOptions();
+                    c_options.AddArgument("--headless");
+                    var driverService = ChromeDriverService.CreateDefaultService();
+                    driverService.HideCommandPromptWindow = true;
+                    _driver = new ChromeDriver(driverService, c_options);
+                }
+                if (navegador == "firefox")
+                {
+                    FirefoxOptions f_options = new FirefoxOptions();
+                    f_options.AddArgument("--headless");
+                    var driverService = FirefoxDriverService.CreateDefaultService();
+                    driverService.HideCommandPromptWindow = true;
+                    _driver = new FirefoxDriver(driverService, f_options);
+                }
             }
-            if (navegador == "firefox")
+            catch(Exception e)
             {
-                FirefoxOptions f_options = new FirefoxOptions();
-                f_options.AddArgument("--headless");
-                var driverService = FirefoxDriverService.CreateDefaultService();
-                driverService.HideCommandPromptWindow = true;
-                _driver = new FirefoxDriver(driverService, f_options);
+                MessageBox.Show(e.Message,"Exceção");
             }
             fazer_login();
         }
