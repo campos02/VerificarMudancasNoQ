@@ -53,9 +53,20 @@ namespace GUI_VerificarMudancasNoQ
             //esconde esta janela e exibe as configs salvas
             this.Hide();
             exibir_configs_salvas();
-            //roda as tarefas de iniciar o driver e do loop de verificação
+            //roda as tarefas de iniciar o driver e do loop de verificação, se houver exceções em iniciar_driver as mostra em caixas de mensagem e fecha o programa
             Task abrir_site = Task.Run(() => verificacao.login_p.iniciar_driver());
-            abrir_site.Wait();
+            try
+            {
+                abrir_site.Wait();
+            }
+            catch (AggregateException ae)
+            {
+                foreach (var e in ae.InnerExceptions)
+                {
+                    MessageBox.Show(e.Message, "Exceção");
+                }
+                Application.Current.Shutdown();
+            }
             verificacao.verificar_acesso();
             Task loop_verificar = Task.Run(() =>
             {
