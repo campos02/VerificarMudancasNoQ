@@ -2,7 +2,6 @@
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Firefox;
 using System;
-using System.Windows;
 
 namespace GUI_VerificarMudancasNoQ
 {
@@ -28,28 +27,21 @@ namespace GUI_VerificarMudancasNoQ
         public void iniciar_driver()
         {
             ler_config();
-            try
+            if (navegador == "chrome")
             {
-                if (navegador == "chrome")
-                {
-                    ChromeOptions c_options = new ChromeOptions();
-                    c_options.AddArgument("--headless");
-                    var driverService = ChromeDriverService.CreateDefaultService();
-                    driverService.HideCommandPromptWindow = true;
-                    _driver = new ChromeDriver(driverService, c_options);
-                }
-                if (navegador == "firefox")
-                {
-                    FirefoxOptions f_options = new FirefoxOptions();
-                    f_options.AddArgument("--headless");
-                    var driverService = FirefoxDriverService.CreateDefaultService();
-                    driverService.HideCommandPromptWindow = true;
-                    _driver = new FirefoxDriver(driverService, f_options);
-                }
+                ChromeOptions c_options = new ChromeOptions();
+                c_options.AddArgument("--headless");
+                var driverService = ChromeDriverService.CreateDefaultService();
+                driverService.HideCommandPromptWindow = true;
+                _driver = new ChromeDriver(driverService, c_options);
             }
-            catch(Exception e)
+            if (navegador == "firefox")
             {
-                MessageBox.Show(e.Message,"Exceção");
+                FirefoxOptions f_options = new FirefoxOptions();
+                f_options.AddArgument("--headless");
+                var driverService = FirefoxDriverService.CreateDefaultService();
+                driverService.HideCommandPromptWindow = true;
+                _driver = new FirefoxDriver(driverService, f_options);
             }
             fazer_login();
         }
