@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -23,6 +24,7 @@ namespace GUI_VerificarMudancasNoQ
         System.Windows.Forms.ContextMenuStrip contextmenu1 = new System.Windows.Forms.ContextMenuStrip();
         System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
         System.Windows.Forms.ToolStripMenuItem toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
+        private readonly Regex numeros_regex = new Regex("[^0-9]+");
         public MainWindow(Verificacao m_verificacao)
         {
             verificacao = m_verificacao;
@@ -136,6 +138,17 @@ namespace GUI_VerificarMudancasNoQ
         public void notificacao_de_mudancas()
         {
             notifyicon1.ShowBalloonTip(3000);//mostra o balão por três segundos
+        }
+
+        private bool Texto_Permitido(string texto)
+        {
+            return numeros_regex.IsMatch(texto);//retorna true somente se o texto corresponder ao regex
+        }
+
+        //lida com o evento somente se a função Texto_Permtido retornar true
+        private void Validacao_Numeros(object sender, TextCompositionEventArgs e)
+        {
+            e.Handled = Texto_Permitido(e.Text);
         }
 
         ~MainWindow()

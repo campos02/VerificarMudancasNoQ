@@ -87,7 +87,7 @@ namespace GUI_VerificarMudancasNoQ
             else { return; }
             notas = notas.Replace('\n', ' '); //Para melhor leitura do arquivo depois
             verificar_anterior(notas);
-            //Salva o texto da página no arquivo, exibe o contador de mudanças e chama a função sleep_refresh
+            //Salva o texto da página no arquivo e chama a função sleep_refresh
             System.IO.File.WriteAllText(arquivo, notas);
             _login.sleep_refresh();
         }
