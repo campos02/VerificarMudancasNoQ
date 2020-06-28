@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Configuration;
 
 namespace GUI_VerificarMudancasNoQ
 {
@@ -109,32 +110,36 @@ namespace GUI_VerificarMudancasNoQ
 
         private void Salvar_Configs()
         {
-            /*salva o texto das caixas nas configurações de usuário, salvando "chrome" ou "firefox" dependendo do índice da combobox,
+            /*salva o texto das caixas nas configurações, salvando "chrome" ou "firefox" dependendo do índice da combobox,
             no final mostra uma mensagem dizendo para reiniciar o programa*/
-            Properties.Settings.Default.Pagina = textbox1.Text;
-            Properties.Settings.Default.Intervalo = textbox2.Text;
+            var configFile = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            var configs = configFile.AppSettings.Settings;
+            configs["Pagina"].Value = textbox1.Text;
+            configs["Intervalo"].Value = textbox2.Text;
             if (combobox1.SelectedIndex == 0)
             {
-                Properties.Settings.Default.Navegador = "chrome";
+                configs["Navegador"].Value = "chrome";
             }
             if (combobox1.SelectedIndex == 1)
             {
-                Properties.Settings.Default.Navegador = "firefox";
+                configs["Navegador"].Value = "firefox";
             }
-            Properties.Settings.Default.Save();
+            configFile.Save(ConfigurationSaveMode.Modified);
+            ConfigurationManager.RefreshSection(configFile.AppSettings.SectionInformation.Name);
             MessageBox.Show(this, "Reinicie este programa para que as novas configurações sejam aplicadas");
         }
 
         private void exibir_configs_salvas()
         {
             //pega as configurações de usuário atuais e as coloca em suas respectivas caixas de além e no caso da combobox seleciona a opção correta
-            textbox1.Text = Properties.Settings.Default.Pagina;
-            textbox2.Text = Properties.Settings.Default.Intervalo;
-            if (Properties.Settings.Default.Navegador == "chrome")
+            var appSettings = ConfigurationManager.AppSettings;
+            textbox1.Text = appSettings["Pagina"];
+            textbox2.Text = appSettings["Intervalo"];
+            if (appSettings["Navegador"] == "chrome")
             {
                 combobox1.SelectedIndex = 0;
             }
-            if (Properties.Settings.Default.Navegador == "firefox")
+            if (appSettings["Navegador"] == "firefox")
             {
                 combobox1.SelectedIndex = 1;
             }

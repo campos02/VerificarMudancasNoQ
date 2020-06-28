@@ -2,6 +2,7 @@
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Firefox;
 using System;
+using System.Configuration;
 
 namespace GUI_VerificarMudancasNoQ
 {
@@ -64,10 +65,11 @@ namespace GUI_VerificarMudancasNoQ
         //Função que lê o arquivo de configuração para obter as opções
         public void ler_config()
         {
-            pagina = Properties.Settings.Default.Pagina;
-            intervalo_string = Properties.Settings.Default.Intervalo;
+            var appSettings = ConfigurationManager.AppSettings;
+            pagina = appSettings["Pagina"];
+            intervalo_string = appSettings["Intervalo"];
             int.TryParse(intervalo_string, out intervalo);
-            navegador = Properties.Settings.Default.Navegador;
+            navegador = appSettings["Navegador"];
         }
 
         //Função que faz o programa dormir no intervalo configurado e depois atualiza a página
