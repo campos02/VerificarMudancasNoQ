@@ -1,6 +1,7 @@
 ﻿using OpenQA.Selenium;
 using System;
 using System.Windows;
+using System.Threading.Tasks;
 
 namespace GUI_VerificarMudancasNoQ
 {
@@ -70,7 +71,7 @@ namespace GUI_VerificarMudancasNoQ
             }
         }
 
-        /*Função que escreve a página configurada na tela, obtem o texto da página configurada e
+        /*Função que obtem o texto da página configurada e
          escreve no arquivo o texto obtido*/
         public void verificar_texto()
         {
@@ -90,6 +91,13 @@ namespace GUI_VerificarMudancasNoQ
             //Salva o texto da página no arquivo e chama a função sleep_refresh
             System.IO.File.WriteAllText(arquivo, notas);
             _login.sleep_refresh();
+        }
+
+        //Inicia o driver e verifica o acesso à pagina
+        public void iniciar_verificar_acesso()
+        {
+            _login.iniciar_driver();
+            verificar_acesso();
         }
     }
 }
