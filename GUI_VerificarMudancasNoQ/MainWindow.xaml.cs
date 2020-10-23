@@ -55,8 +55,7 @@ namespace GUI_VerificarMudancasNoQ
             //esconde esta janela e exibe as configs salvas
             this.Hide();
             exibir_configs_salvas();
-            /*Roda a tarefa de iniciar a verificação, se houver exceções de acesso negado ou driver não encontrado as mostra
-            em caixas de mensagem. Somente se a função iniciar_verificar_acesso retornar 0 inicia o loop de verificação*/
+            //Roda a tarefa de iniciar a verificação
             Task.Run(() => iniciar_verificacao());
         }
 
@@ -95,8 +94,8 @@ namespace GUI_VerificarMudancasNoQ
             no final mostra uma mensagem dizendo para reiniciar o programa*/
             var configFile = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             var configs = configFile.AppSettings.Settings;
-            configs["Pagina"].Value = textbox1.Text;
-            configs["Intervalo"].Value = textbox2.Text;
+            configs["Pagina"].Value = textbox1.Text.Trim();
+            configs["Intervalo"].Value = textbox2.Text.Trim();
             if (combobox1.SelectedIndex == 0)
             {
                 configs["Navegador"].Value = "chrome";
@@ -148,11 +147,13 @@ namespace GUI_VerificarMudancasNoQ
             e.Handled = Texto_Permitido(e.Text);
         }
 
+        //De forma assíncrona muda o text do ícone de notificação para o do parâmetro texto
         public async Task set_texto_icone_notificacaoAsync(string texto)
         {
             await Task.Run(() => { notifyicon1.Text = texto; });
         }
 
+        //Se houver exceções de acesso negado ou driver não encontrado as mostra em caixas de mensagem e retorna a função, a encerrando
         public async Task iniciar_verificacao()
         {
             try

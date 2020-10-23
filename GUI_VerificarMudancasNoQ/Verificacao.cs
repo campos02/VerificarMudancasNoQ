@@ -58,16 +58,14 @@ namespace GUI_VerificarMudancasNoQ
         {
             int numerneg = 1; //Index onde fica o texto obtido da página de acesso negado
             var elementos = _login.driver.FindElements(By.TagName("td"));
-            /*Caso se encontre na página de acesso negado, mostra em uma caixa de mensagem um aviso para verificar
-            login e senha e reinicia o programa*/
+            //Caso se encontre na página de acesso negado, lança uma exceção de acesso negado
             if (elementos[numerneg].Text.Contains("Negado"))
             {
                 throw new AcessoNegadoException("Verifique login e senha!");
             }
         }
 
-        /*Função que obtem o texto da página configurada e
-         escreve no arquivo o texto obtido*/
+        /*Função que obtem o texto da página configurada e escreve no arquivo o texto obtido*/
         public void verificar_texto()
         {
             int numerneg = 1; //Index onde fica o texto obtido da página de acesso negado
