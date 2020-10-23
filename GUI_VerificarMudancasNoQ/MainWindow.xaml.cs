@@ -14,6 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Configuration;
+using OpenQA.Selenium;
 
 namespace GUI_VerificarMudancasNoQ
 {
@@ -54,8 +55,29 @@ namespace GUI_VerificarMudancasNoQ
             //esconde esta janela e exibe as configs salvas
             this.Hide();
             exibir_configs_salvas();
-            //roda as tarefas de iniciar o driver e do loop de verificação, se houver exceções em iniciar_driver as mostra em caixas de mensagem e fecha o programa
-            Task iniciar_verificacao = Task.Run(() => verificacao.login_p.iniciar_driver());
+            /*Roda a tarefa de iniciar a verificação, se houver exceções de acesso negado ou driver não encontrado as mostra
+            em caixas de mensagem. Somente se a função iniciar_verificar_acesso retornar 0 inicia o loop de verificação*/
+            Task iniciar_verificacao = Task.Run(() =>
+            {
+                try
+                {
+                    verificacao.iniciar_verificar_acesso();
+                }
+                catch (AcessoNegadoException)
+                {
+                    MessageBox.Show("Reinicie este programa e verifique login e senha!", "Exceção");
+                    return;
+                }
+                catch (DriverServiceNotFoundException)
+                {
+                    MessageBox.Show("Binário de driver do selenium não encontrado! Coloque um binário e reinicie o programa", "Exceção");
+                    return;
+                }
+                while (true)
+                {
+                    verificacao.verificar_texto();
+                }
+            });
             notifyicon1.Text = "Verificando página configurada...";
         }
 
