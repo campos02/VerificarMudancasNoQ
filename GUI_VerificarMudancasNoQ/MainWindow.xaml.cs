@@ -57,28 +57,7 @@ namespace GUI_VerificarMudancasNoQ
             exibir_configs_salvas();
             /*Roda a tarefa de iniciar a verificação, se houver exceções de acesso negado ou driver não encontrado as mostra
             em caixas de mensagem. Somente se a função iniciar_verificar_acesso retornar 0 inicia o loop de verificação*/
-            Task iniciar_verificacao = Task.Run(() =>
-            {
-                try
-                {
-                    verificacao.iniciar_verificar_acesso();
-                }
-                catch (AcessoNegadoException)
-                {
-                    MessageBox.Show("Reinicie este programa e verifique login e senha!", "Exceção");
-                    return;
-                }
-                catch (DriverServiceNotFoundException)
-                {
-                    MessageBox.Show("Binário de driver do selenium não encontrado! Coloque um binário e reinicie o programa", "Exceção");
-                    return;
-                }
-                while (true)
-                {
-                    verificacao.verificar_texto();
-                }
-            });
-            notifyicon1.Text = "Verificando página configurada...";
+            Task.Run(() => iniciar_verificacao());
         }
 
         private void mostrar(object sender, EventArgs e)
@@ -167,6 +146,34 @@ namespace GUI_VerificarMudancasNoQ
         private void Validacao_Numeros(object sender, TextCompositionEventArgs e)
         {
             e.Handled = Texto_Permitido(e.Text);
+        }
+
+        public async Task set_texto_icone_notificacaoAsync(string texto)
+        {
+            await Task.Run(() => { notifyicon1.Text = texto; });
+        }
+
+        public async Task iniciar_verificacao()
+        {
+            try
+            {
+                verificacao.iniciar_verificar_acesso();
+            }
+            catch (AcessoNegadoException)
+            {
+                MessageBox.Show("Reinicie este programa e verifique login e senha!", "Exceção");
+                return;
+            }
+            catch (DriverServiceNotFoundException)
+            {
+                MessageBox.Show("Binário de driver do selenium não encontrado! Coloque um binário e reinicie o programa", "Exceção");
+                return;
+            }
+            while (true)
+            {
+                await set_texto_icone_notificacaoAsync("Verificando página configurada...");
+                verificacao.verificar_texto();
+            }
         }
 
         ~MainWindow()
