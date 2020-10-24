@@ -170,9 +170,9 @@ namespace GUI_VerificarMudancasNoQ
                 MessageBox.Show("Binário de driver do selenium não encontrado! Coloque um binário e reinicie o programa", "Exceção");
                 return;
             }
+            await set_texto_icone_notificacaoAsync("Verificando página configurada...");
             while (true)
             {
-                await set_texto_icone_notificacaoAsync("Verificando página configurada...");
                 verificacao.verificar_texto();
             }
         }
