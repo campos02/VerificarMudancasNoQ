@@ -1,6 +1,7 @@
 ﻿using OpenQA.Selenium;
 using System;
 using System.Windows;
+using System.Threading.Tasks;
 
 namespace GUI_VerificarMudancasNoQ
 {
@@ -57,21 +58,14 @@ namespace GUI_VerificarMudancasNoQ
         {
             int numerneg = 1; //Index onde fica o texto obtido da página de acesso negado
             var elementos = _login.driver.FindElements(By.TagName("td"));
-            /*Caso se encontre na página de acesso negado, mostra em uma caixa de mensagem um aviso para
-            verificar login e senha e reinicia o programa*/
+            //Caso se encontre na página de acesso negado, lança uma exceção de acesso negado
             if (elementos[numerneg].Text.Contains("Negado"))
             {
-                if (MessageBox.Show("Este programa será reiniciado, verifique login e senha e os insira novamente") == MessageBoxResult.OK)
-                {
-                    System.Diagnostics.Process.Start(Application.ResourceAssembly.Location);
-                    _login.fechar();
-                    Application.Current.Shutdown();
-                }
+                throw new AcessoNegadoException("Verifique login e senha!");
             }
         }
 
-        /*Função que escreve a página configurada na tela, obtem o texto da página configurada e
-         escreve no arquivo o texto obtido*/
+        /*Função que obtem o texto da página configurada e escreve no arquivo o texto obtido*/
         public void verificar_texto()
         {
             int numerneg = 1; //Index onde fica o texto obtido da página de acesso negado
@@ -90,6 +84,13 @@ namespace GUI_VerificarMudancasNoQ
             //Salva o texto da página no arquivo e chama a função sleep_refresh
             System.IO.File.WriteAllText(arquivo, notas);
             _login.sleep_refresh();
+        }
+
+        //Inicia o driver e verifica o acesso à pagina
+        public void iniciar_verificar_acesso()
+        {
+            _login.iniciar_driver();
+            verificar_acesso();
         }
     }
 }

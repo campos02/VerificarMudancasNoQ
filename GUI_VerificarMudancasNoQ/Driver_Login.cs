@@ -82,7 +82,7 @@ namespace GUI_VerificarMudancasNoQ
         //Fecha o driver
         public void fechar()
         {
-            driver.Quit();
+            _driver.Quit();
         }
     }
 }

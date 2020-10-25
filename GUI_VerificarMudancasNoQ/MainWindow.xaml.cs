@@ -14,6 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Configuration;
+using OpenQA.Selenium;
 
 namespace GUI_VerificarMudancasNoQ
 {
@@ -54,29 +55,8 @@ namespace GUI_VerificarMudancasNoQ
             //esconde esta janela e exibe as configs salvas
             this.Hide();
             exibir_configs_salvas();
-            //roda as tarefas de iniciar o driver e do loop de verificação, se houver exceções em iniciar_driver as mostra em caixas de mensagem e fecha o programa
-            Task abrir_site = Task.Run(() => verificacao.login_p.iniciar_driver());
-            try
-            {
-                abrir_site.Wait();
-            }
-            catch (AggregateException ae)
-            {
-                foreach (var e in ae.InnerExceptions)
-                {
-                    MessageBox.Show(e.Message, "Exceção");
-                }
-                Application.Current.Shutdown();
-            }
-            verificacao.verificar_acesso();
-            Task loop_verificar = Task.Run(() =>
-            {
-                while (true)
-                {
-                    verificacao.verificar_texto();
-                }
-            });
-            notifyicon1.Text = "Verificando página configurada...";
+            //Roda a tarefa de iniciar a verificação
+            Task.Run(() => iniciar_verificacao());
         }
 
         private void mostrar(object sender, EventArgs e)
@@ -114,8 +94,8 @@ namespace GUI_VerificarMudancasNoQ
             no final mostra uma mensagem dizendo para reiniciar o programa*/
             var configFile = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             var configs = configFile.AppSettings.Settings;
-            configs["Pagina"].Value = textbox1.Text;
-            configs["Intervalo"].Value = textbox2.Text;
+            configs["Pagina"].Value = textbox1.Text.Trim();
+            configs["Intervalo"].Value = textbox2.Text.Trim();
             if (combobox1.SelectedIndex == 0)
             {
                 configs["Navegador"].Value = "chrome";
@@ -165,6 +145,36 @@ namespace GUI_VerificarMudancasNoQ
         private void Validacao_Numeros(object sender, TextCompositionEventArgs e)
         {
             e.Handled = Texto_Permitido(e.Text);
+        }
+
+        //De forma assíncrona muda o text do ícone de notificação para o do parâmetro texto
+        public async Task set_texto_icone_notificacaoAsync(string texto)
+        {
+            await Task.Run(() => { notifyicon1.Text = texto; });
+        }
+
+        //Se houver exceções de acesso negado ou driver não encontrado as mostra em caixas de mensagem e retorna a função, a encerrando
+        public async Task iniciar_verificacao()
+        {
+            try
+            {
+                verificacao.iniciar_verificar_acesso();
+            }
+            catch (AcessoNegadoException)
+            {
+                MessageBox.Show("Reinicie este programa e verifique login e senha!", "Exceção");
+                return;
+            }
+            catch (DriverServiceNotFoundException)
+            {
+                MessageBox.Show("Binário de driver do selenium não encontrado! Coloque um binário e reinicie o programa", "Exceção");
+                return;
+            }
+            await set_texto_icone_notificacaoAsync("Verificando página configurada...");
+            while (true)
+            {
+                verificacao.verificar_texto();
+            }
         }
 
         ~MainWindow()
