@@ -22,50 +22,50 @@ namespace GUI_VerificarMudancasNoQ
     {
         private Verificacao verificacao;
         //inicia o ícone na área de notificação e seus respectivos menus
-        System.Windows.Forms.NotifyIcon notifyicon1 = new System.Windows.Forms.NotifyIcon();
-        System.Windows.Forms.ContextMenuStrip contextmenu1 = new System.Windows.Forms.ContextMenuStrip();
+        System.Windows.Forms.NotifyIcon notifyIcon1 = new System.Windows.Forms.NotifyIcon();
+        System.Windows.Forms.ContextMenuStrip contextMenu1 = new System.Windows.Forms.ContextMenuStrip();
         System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
         System.Windows.Forms.ToolStripMenuItem toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
-        private readonly Regex numeros_regex = new Regex("[^0-9]+");
-        public MainWindow(Verificacao m_verificacao)
+        private readonly Regex numerosRegex = new Regex("[^0-9]+");
+        public MainWindow(Verificacao verificacao)
         {
-            verificacao = m_verificacao;
+            this.verificacao = verificacao;
             InitializeComponent();
             /*configura o ícone na área de notificação e seus menus, adicionando ícone, menu com duas opções e tornando-as funcionais:
             "Configurações" exibe a janela de mesmo nome e "Sair" fecha o programa*/
-            notifyicon1.Icon = Properties.Resources.Icone_Q;
-            notifyicon1.ContextMenuStrip = contextmenu1;
-            notifyicon1.BalloonTipTitle = "Mudanças";
-            notifyicon1.BalloonTipText = "Foram detectadas mudanças na página verificada";
-            notifyicon1.Text = "Iniciando...";
-            contextmenu1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            notifyIcon1.Icon = Properties.Resources.Icone_Q;
+            notifyIcon1.ContextMenuStrip = contextMenu1;
+            notifyIcon1.BalloonTipTitle = "Mudanças";
+            notifyIcon1.BalloonTipText = "Foram detectadas mudanças na página verificada";
+            notifyIcon1.Text = "Iniciando...";
+            contextMenu1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             toolStripMenuItem1,
             toolStripMenuItem2});
-            contextmenu1.Name = "contextmenu1";
-            contextmenu1.Size = new System.Drawing.Size(152, 48);
+            contextMenu1.Name = "contextmenu1";
+            contextMenu1.Size = new System.Drawing.Size(152, 48);
             toolStripMenuItem1.Size = new System.Drawing.Size(151, 22);
             toolStripMenuItem2.Size = new System.Drawing.Size(151, 22);
             toolStripMenuItem1.Name = "toolStripMenuItem1";
             toolStripMenuItem2.Name = "toolStripMenuItem2";
             toolStripMenuItem1.Text = "Configurações";
             toolStripMenuItem2.Text = "Sair";
-            toolStripMenuItem1.Click += new System.EventHandler(this.mostrar);
+            toolStripMenuItem1.Click += new System.EventHandler(this.Mostrar);
             toolStripMenuItem2.Click += new System.EventHandler(this.Sair);
-            notifyicon1.Visible = true;
+            notifyIcon1.Visible = true;
             //esconde esta janela e exibe as configs salvas
             this.Hide();
-            exibir_configs_salvas();
+            ExibirConfigsSalvas();
             //Roda a tarefa de iniciar a verificação
-            Task.Run(() => iniciar_verificacao());
+            Task.Run(() => IniciarVerificacao());
         }
 
-        private void mostrar(object sender, EventArgs e)
+        private void Mostrar(object sender, EventArgs e)
         {
             this.Show();
             this.WindowState = WindowState.Normal;
         }
 
-        private void mostrar(object sender, RoutedEventArgs e)
+        private void Mostrar(object sender, RoutedEventArgs e)
         {
             this.Show();
             this.WindowState = WindowState.Normal;
@@ -73,22 +73,22 @@ namespace GUI_VerificarMudancasNoQ
 
         private void Sair(object sender, EventArgs e)
         {
-            verificacao.login_p.fechar();
+            verificacao.Login.Fechar();
             Application.Current.Shutdown();
         }
 
         private void Sair(object sender, RoutedEventArgs e)
         {
-            verificacao.login_p.fechar();
+            verificacao.Login.Fechar();
             Application.Current.Shutdown();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            Salvar_Configs();
+            SalvarConfigs();
         }
 
-        private void Salvar_Configs()
+        private void SalvarConfigs()
         {
             /*salva o texto das caixas nas configurações, salvando "chrome" ou "firefox" dependendo do índice da combobox,
             no final mostra uma mensagem dizendo para reiniciar o programa*/
@@ -109,7 +109,7 @@ namespace GUI_VerificarMudancasNoQ
             MessageBox.Show(this, "Reinicie este programa para que as novas configurações sejam aplicadas");
         }
 
-        private void exibir_configs_salvas()
+        private void ExibirConfigsSalvas()
         {
             //pega as configurações de usuário atuais e as coloca em suas respectivas caixas de além e no caso da combobox seleciona a opção correta
             var appSettings = ConfigurationManager.AppSettings;
@@ -128,37 +128,37 @@ namespace GUI_VerificarMudancasNoQ
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
             this.Hide();
-            exibir_configs_salvas();
+            ExibirConfigsSalvas();
         }
 
-        public void notificacao_de_mudancas()
+        public void NotificacaoDeMudancas()
         {
-            notifyicon1.ShowBalloonTip(3000);//mostra o balão por três segundos
+            notifyIcon1.ShowBalloonTip(3000);//mostra o balão por três segundos
         }
 
-        private bool Texto_Permitido(string texto)
+        private bool TextoPermitido(string texto)
         {
-            return numeros_regex.IsMatch(texto);//retorna true somente se o texto corresponder ao regex
+            return numerosRegex.IsMatch(texto);//retorna true somente se o texto corresponder ao regex
         }
 
         //lida com o evento somente se a função Texto_Permtido retornar true
-        private void Validacao_Numeros(object sender, TextCompositionEventArgs e)
+        private void ValidacaoNumeros(object sender, TextCompositionEventArgs e)
         {
-            e.Handled = Texto_Permitido(e.Text);
+            e.Handled = TextoPermitido(e.Text);
         }
 
         //De forma assíncrona muda o text do ícone de notificação para o do parâmetro texto
-        public async Task set_texto_icone_notificacaoAsync(string texto)
+        public async Task SetTextoIconeNotificacaoAsync(string texto)
         {
-            await Task.Run(() => { notifyicon1.Text = texto; });
+            await Task.Run(() => { notifyIcon1.Text = texto; });
         }
 
         //Se houver exceções de acesso negado ou driver não encontrado as mostra em caixas de mensagem e retorna a função, a encerrando
-        public async Task iniciar_verificacao()
+        public async Task IniciarVerificacao()
         {
             try
             {
-                verificacao.iniciar_verificar_acesso();
+                verificacao.IniciarVerificarAcesso();
             }
             catch (AcessoNegadoException)
             {
@@ -170,16 +170,16 @@ namespace GUI_VerificarMudancasNoQ
                 MessageBox.Show("Binário de driver do selenium não encontrado! Coloque um binário e reinicie o programa", "Exceção");
                 return;
             }
-            await set_texto_icone_notificacaoAsync("Verificando página configurada...");
+            await SetTextoIconeNotificacaoAsync("Verificando página configurada...");
             while (true)
             {
-                verificacao.verificar_texto();
+                verificacao.VerificarTexto();
             }
         }
 
         ~MainWindow()
         {
-            verificacao.login_p.fechar();
+            verificacao.Login.Fechar();
         }
     }
 }

@@ -14,11 +14,11 @@ using System.Windows.Shapes;
 
 namespace GUI_VerificarMudancasNoQ
 {
-    public partial class Login_e_Senha : Window
+    public partial class LoginSenha : Window
     {
         private MainWindow main;
         private Verificacao verificacao;
-        public Login_e_Senha()
+        public LoginSenha()
         {
             InitializeComponent();
         }
@@ -28,7 +28,7 @@ namespace GUI_VerificarMudancasNoQ
             this.Hide();
             verificacao = new Verificacao(textbox1.Text, passwordbox1.Password);
             main = new MainWindow(verificacao);
-            verificacao.mainWindow = main;
+            verificacao.MainWindow = main;
             textbox1.Text = "";
             passwordbox1.Password = "";
         }

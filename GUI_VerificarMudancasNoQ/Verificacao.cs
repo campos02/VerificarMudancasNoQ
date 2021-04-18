@@ -7,90 +7,90 @@ namespace GUI_VerificarMudancasNoQ
 {
     public class Verificacao
     {
-        private Driver_Login _login;
-        public Driver_Login login_p { get => _login; }
+        private DriverLogin login;
+        public DriverLogin Login => login;
         private int mudancas = 0;
         private string notas;
         private const string arquivo = "textodoq.log";
         private System.Media.SoundPlayer player = new System.Media.SoundPlayer(Properties.Resources.light);
-        public MainWindow mainWindow { get; set; }
+        public MainWindow MainWindow { get; set; }
 
-        public Verificacao(string login_janela, string senha_janela)
+        public Verificacao(string loginJanela, string senhaJanela)
         {
-            _login = new Driver_Login(login_janela, senha_janela);
+            login = new DriverLogin(loginJanela, senhaJanela);
         }
 
-        public Verificacao(string login_janela, string senha_janela, MainWindow mainWin)
+        public Verificacao(string loginJanela, string senhaJanela, MainWindow mainWindow)
         {
-            _login = new Driver_Login(login_janela, senha_janela);
-            mainWindow = mainWin;
+            login = new DriverLogin(loginJanela, senhaJanela);
+            this.MainWindow = mainWindow;
         }
 
-        private void notificacao()
+        private void Notificacao()
         {
             player.Play();
-            mainWindow.notificacao_de_mudancas();
+            MainWindow.NotificacaoDeMudancas();
         }
 
         /*Função que compara um texto fornecido com o texto do arquivo, notifica e
         incrementa o contador de mudanças caso sejam diferentes e o arquivo não esteja em branco*/
-        private void verificar_anterior(string comp1)
+        private void VerificarAnterior(string texto)
         {
-            string comp2 = "";
+            string arquivo = "";
             //Tenta ler o arquivo e o cria caso não exista
             try
             {
-                comp2 = System.IO.File.ReadAllText(arquivo);
+                arquivo = System.IO.File.ReadAllText(Verificacao.arquivo);
             }
             catch (System.IO.FileNotFoundException)
             {
-                System.IO.File.Create(arquivo).Close();
+                System.IO.File.Create(Verificacao.arquivo).Close();
             }
             //Comparação e notificação
-            if (comp1 != comp2 && comp2 != "")
+            if (texto != arquivo && arquivo != "")
             {
-                notificacao();
+                Notificacao();
                 mudancas++;
             }
         }
 
-        public void verificar_acesso()
+        public void VerificarAcesso()
         {
-            int numerneg = 1; //Index onde fica o texto obtido da página de acesso negado
-            var elementos = _login.driver.FindElements(By.TagName("td"));
+            int indexNegado = 1; //Index onde fica o texto obtido da página de acesso negado
+            var elementos = login.Driver.FindElements(By.TagName("td"));
             //Caso se encontre na página de acesso negado, lança uma exceção de acesso negado
-            if (elementos[numerneg].Text.Contains("Negado"))
+            if (elementos[indexNegado].Text.Contains("Negado"))
             {
                 throw new AcessoNegadoException("Verifique login e senha!");
             }
         }
 
         /*Função que obtem o texto da página configurada e escreve no arquivo o texto obtido*/
-        public void verificar_texto()
+        public void VerificarTexto()
         {
-            int numerneg = 1; //Index onde fica o texto obtido da página de acesso negado
-            int numer = 10; //Index onde geralmente fica o texto obtido da tag das páginas
-            var elementos = _login.driver.FindElements(By.TagName("td"));
+            int indexNegado = 1; //Index onde fica o texto obtido da página de acesso negado
+            int indexPaginas = 10; //Index onde geralmente fica o texto obtido da tag das páginas
+            var elementos = login.Driver.FindElements(By.TagName("td"));
             //Caso se encontre na página de acesso negado, faz login novamente e retorna a função
-            if (elementos[numerneg].Text.Contains("Negado"))
+            if (elementos[indexNegado].Text.Contains("Negado"))
             {
-                _login.fazer_login();
+                login.FazerLogin();
                 return;
             }
-            if (elementos.Count >= numer) { notas = elementos[numer].Text; }
+            if (elementos.Count >= indexPaginas) { notas = elementos[indexPaginas].Text; }
             else { return; }
             notas = notas.Replace('\n', ' '); //Para melhor leitura do arquivo depois
-            verificar_anterior(notas);
+            VerificarAnterior(notas);
             //Salva o texto da página no arquivo e chama a função sleep_refresh
             System.IO.File.WriteAllText(arquivo, notas);
-            _login.sleep_refresh();
+            login.SleepRefresh();
         }
 
         //Inicia o driver e verifica o acesso à pagina
-        public void iniciar_verificar_acesso()
+        public void IniciarVerificarAcesso()
         {
-            _login.iniciar_driver();
-            verificar_acesso();
+            login.IniciarDriver();
+            VerificarAcesso();
         }
     }
 }
